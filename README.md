@@ -31,34 +31,7 @@ Deployment configurations for Vexa Lite - a lightweight API for real-time meetin
 
 ## 🚀 Quick Deploy - Fly.io
 
-**Deploy in 2 commands:**
-
-```bash
-cd fly
-chmod +x deploy.sh
-./deploy.sh
-```
-
-**What you need:**
-- [Fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/) installed
-- Fly.io account (free tier available)
-- Database URL (Supabase, Neon, or any PostgreSQL)
-- Transcription API key - get it from [https://staging.vexa.ai/dashboard/transcription](https://staging.vexa.ai/dashboard/transcription) or self-host your own Vexa transcription service 
-
-**Setup:**
-1. Install Fly CLI: `curl -L https://fly.io/install.sh | sh`
-2. Login: `fly auth login`
-3. Create `.env` file in `fly/` directory:
-   ```bash
-   DATABASE_URL=postgresql://user:pass@host:5432/dbname
-   TRANSCRIBER_API_KEY=your-api-key
-   ADMIN_API_TOKEN=your-secure-token  # Optional, will be auto-generated
-   ```
-4. Run `./deploy.sh`
-
-**That's it!** Your app will be live at `https://vexa-lite.fly.dev`
-
-📖 [Detailed Fly.io instructions](./fly/README.md)
+Deploy Vexa Lite to Fly.io in minutes. See [detailed Fly.io deployment instructions](./fly/README.md) for step-by-step setup.
 
 ---
 
