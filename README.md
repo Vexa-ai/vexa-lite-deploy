@@ -1,10 +1,8 @@
 # Vexa Lite - One-Click Deployment
 
-Deploy Vexa Lite to your preferred platform in minutes. This repository contains deployment configurations for multiple services.
+Deploy Vexa Lite to your preferred platform in minutes. This repository contains deployment configurations for various cloud services.
 
-## 🚀 Quick Deploy Options
-
-### Option 1: Fly.io (Recommended)
+## 🚀 Quick Deploy - Fly.io
 
 **Deploy in 2 commands:**
 
@@ -34,151 +32,6 @@ chmod +x deploy.sh
 **That's it!** Your app will be live at `https://vexa-lite.fly.dev`
 
 📖 [Detailed Fly.io instructions](./fly/README.md)
-
----
-
-### Option 2: Docker (Self-Hosted)
-
-**Deploy in 1 command:**
-
-```bash
-docker run -d \
-  --name vexa-lite \
-  -p 8056:8056 \
-  -e DATABASE_URL="postgresql://user:pass@host:5432/dbname" \
-  -e TRANSCRIBER_API_KEY="your-api-key" \
-  -e ADMIN_API_TOKEN="your-secure-token" \
-  -e TRANSCRIBER_URL="https://transcription.vexa.ai/v1/audio/transcriptions" \
-  -e DB_SSL_MODE="require" \
-  vexaai/vexa-lite:latest
-```
-
-**Access:**
-- API: `http://localhost:8056/docs`
-- Health: `http://localhost:8056/`
-
----
-
-### Option 3: Docker Compose
-
-**Deploy with a single file:**
-
-Create `docker-compose.yml`:
-
-```yaml
-version: '3.8'
-
-services:
-  vexa-lite:
-    image: vexaai/vexa-lite:latest
-    ports:
-      - "8056:8056"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - TRANSCRIBER_API_KEY=${TRANSCRIBER_API_KEY}
-      - ADMIN_API_TOKEN=${ADMIN_API_TOKEN}
-      - TRANSCRIBER_URL=https://transcription.vexa.ai/v1/audio/transcriptions
-      - DB_SSL_MODE=require
-    restart: unless-stopped
-```
-
-Create `.env` file:
-```bash
-DATABASE_URL=postgresql://user:pass@host:5432/dbname
-TRANSCRIBER_API_KEY=your-api-key
-ADMIN_API_TOKEN=$(openssl rand -hex 32)
-```
-
-Deploy:
-```bash
-docker compose up -d
-```
-
----
-
-### Option 4: Railway
-
-**Deploy via Railway Dashboard:**
-
-1. Go to [Railway](https://railway.app)
-2. Click "New Project" → "Deploy from GitHub"
-3. Select this repository
-4. Add environment variables:
-   - `DATABASE_URL` (Railway can provision PostgreSQL automatically)
-   - `TRANSCRIBER_API_KEY`
-   - `ADMIN_API_TOKEN` (generate with `openssl rand -hex 32`)
-   - `TRANSCRIBER_URL=https://transcription.vexa.ai/v1/audio/transcriptions`
-   - `DB_SSL_MODE=require`
-5. Set Docker image: `vexaai/vexa-lite:latest`
-6. Set port: `8056`
-7. Deploy!
-
----
-
-### Option 5: Render
-
-**Deploy via Render Dashboard:**
-
-1. Go to [Render](https://render.com)
-2. Click "New" → "Web Service"
-3. Connect your repository or use Docker image: `vexaai/vexa-lite:latest`
-4. Configure:
-   - **Name**: `vexa-lite`
-   - **Environment**: `Docker`
-   - **Docker Image**: `vexaai/vexa-lite:latest`
-   - **Port**: `8056`
-5. Add environment variables:
-   - `DATABASE_URL` (Render can provision PostgreSQL)
-   - `TRANSCRIBER_API_KEY`
-   - `ADMIN_API_TOKEN`
-   - `TRANSCRIBER_URL=https://transcription.vexa.ai/v1/audio/transcriptions`
-   - `DB_SSL_MODE=require`
-6. Deploy!
-
----
-
-### Option 6: Google Cloud Run
-
-**Deploy via gcloud CLI:**
-
-```bash
-gcloud run deploy vexa-lite \
-  --image vexaai/vexa-lite:latest \
-  --platform managed \
-  --region us-central1 \
-  --port 8056 \
-  --set-env-vars="TRANSCRIBER_URL=https://transcription.vexa.ai/v1/audio/transcriptions,DB_SSL_MODE=require" \
-  --set-secrets="DATABASE_URL=DATABASE_URL:latest,TRANSCRIBER_API_KEY=TRANSCRIBER_API_KEY:latest,ADMIN_API_TOKEN=ADMIN_API_TOKEN:latest" \
-  --allow-unauthenticated
-```
-
-**Or via Console:**
-1. Go to [Cloud Run](https://console.cloud.google.com/run)
-2. Click "Create Service"
-3. Select "Deploy one revision from an existing container image"
-4. Image: `vexaai/vexa-lite:latest`
-5. Port: `8056`
-6. Add environment variables and secrets
-7. Deploy!
-
----
-
-### Option 7: AWS App Runner
-
-**Deploy via AWS Console:**
-
-1. Go to [AWS App Runner](https://console.aws.amazon.com/apprunner)
-2. Click "Create service"
-3. Source: "Container registry" → "Amazon ECR Public"
-4. Image URI: `public.ecr.aws/vexaai/vexa-lite:latest` (or use Docker Hub)
-5. Port: `8056`
-6. Add environment variables:
-   - `DATABASE_URL`
-   - `TRANSCRIBER_API_KEY`
-   - `ADMIN_API_TOKEN`
-   - `TRANSCRIBER_URL=https://transcription.vexa.ai/v1/audio/transcriptions`
-   - `DB_SSL_MODE=require`
-7. Deploy!
 
 ---
 
@@ -215,8 +68,8 @@ Vexa Lite requires PostgreSQL. Quick setup options:
 2. Create a new project
 3. Copy the connection string from the dashboard
 
-### Railway/Render
-Both platforms can automatically provision PostgreSQL databases. Just connect them to your Vexa Lite service.
+### Other Providers
+Many cloud providers offer managed PostgreSQL databases. Just ensure your connection string is in the format: `postgresql://user:password@host:port/database`
 
 ## 🔑 Getting a Transcription API Key
 
@@ -238,10 +91,6 @@ curl https://your-app-url/
 open https://your-app-url/docs
 ```
 
-## 📚 Platform-Specific Guides
-
-- [Fly.io Detailed Guide](./fly/README.md) - Complete Fly.io deployment instructions
-
 ## 🔧 Troubleshooting
 
 ### Database Connection Issues
@@ -260,16 +109,11 @@ open https://your-app-url/docs
 
 1. Check logs:
    ```bash
-   # Fly.io
    fly logs -a vexa-lite
-   
-   # Docker
-   docker logs vexa-lite
    ```
 
 2. Verify all environment variables are set:
    ```bash
-   # Fly.io
    fly secrets list -a vexa-lite
    ```
 
@@ -277,6 +121,56 @@ open https://your-app-url/docs
    ```bash
    curl https://your-app-url/
    ```
+
+## 🤝 Contributing
+
+We'd love your help adding more deployment options! This repository currently supports Fly.io, but we want to make Vexa Lite easy to deploy on any platform.
+
+### How to Contribute a New Deployment Option
+
+1. **Create a new directory** for your platform (e.g., `railway/`, `render/`, `docker/`, etc.)
+2. **Add deployment files**:
+   - Configuration files (e.g., `railway.toml`, `render.yaml`, `docker-compose.yml`)
+   - Deployment script (e.g., `deploy.sh`) if applicable
+   - README with step-by-step instructions
+3. **Update the main README** to include your platform in the Quick Deploy section
+4. **Submit a pull request** with:
+   - Clear instructions
+   - Example `.env` file (without secrets)
+   - Troubleshooting tips
+
+### Example Structure
+
+```
+vexa-lite-deploy/
+├── fly/
+│   ├── deploy.sh
+│   ├── fly.toml
+│   ├── .env.example
+│   └── README.md
+├── railway/          # Your new platform
+│   ├── railway.toml
+│   ├── deploy.sh
+│   └── README.md
+└── README.md          # Update this to include your platform
+```
+
+### Platforms We'd Love to See
+
+- Railway
+- Render
+- Google Cloud Run
+- AWS App Runner / ECS / Lambda
+- DigitalOcean App Platform
+- Heroku
+- Vercel
+- Netlify
+- Azure Container Apps
+- Kubernetes (Helm charts)
+- Docker Compose (for local development)
+- And more!
+
+**Ready to contribute?** Open an issue or submit a PR! 🚀
 
 ## 🆘 Need Help?
 
