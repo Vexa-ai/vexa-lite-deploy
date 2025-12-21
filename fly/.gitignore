@@ -1,0 +1,13 @@
+# Fly.io
+.fly/
+fly.toml.bak
+
+# Secrets and environment files
+.env
+.env.local
+*.secret
+
+# OS
+.DS_Store
+Thumbs.db
+
