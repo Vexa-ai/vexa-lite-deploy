@@ -140,15 +140,7 @@ fly secrets list -a vexa-lite
 fly apps restart -a vexa-lite
 ```
 
-### Current Secrets Configuration
 
-The deployment uses individual DB_* environment variables (not DATABASE_URL):
-- `DB_HOST` - Supabase pooler hostname
-- `DB_PORT` - Port (usually 5432)
-- `DB_NAME` - Database name (usually "postgres")
-- `DB_USER` - Full pooler username (e.g., "postgres.project_id")
-- `DB_PASSWORD` - Database password
-- `DB_SSL_MODE` - Set to "require" (in fly.toml)
 
 ## Configuration Details
 
