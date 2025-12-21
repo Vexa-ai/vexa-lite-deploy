@@ -1,6 +1,29 @@
+<p align="left">
+  <img src="assets/logodark.svg" alt="Vexa Logo" width="40"/>
+</p>
+
 # Vexa Lite - One-Click Deployment
 
 Deployment configurations for Vexa Lite - a lightweight API for real-time meeting transcription. See the [main Vexa repository](https://github.com/Vexa-ai/vexa) for project details and documentation.
+
+<p align="left">
+  <strong>🚀 Fly.io</strong>
+  <span style="color: #999;">   Railway</span>
+  <span style="color: #999;">   Render</span>
+  <span style="color: #999;">   Google Cloud Run</span>
+  <span style="color: #999;">   AWS</span>
+  <span style="color: #999;">   Docker</span>
+</p>
+
+<p align="left">
+  <img height="24" src="assets/google-meet.svg" alt="Google Meet" style="margin-right: 8px; vertical-align: middle;"/>
+  <strong>Google Meet</strong>
+    
+  <img height="24" src="assets/microsoft-teams.svg" alt="Microsoft Teams" style="margin-right: 8px; vertical-align: middle;"/>
+  <strong>Microsoft Teams</strong>
+    
+  <span style="color: #999;">Zoom (coming soon)</span>
+</p>
 
 ## What is Vexa?
 
