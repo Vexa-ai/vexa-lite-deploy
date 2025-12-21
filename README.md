@@ -1,6 +1,10 @@
 # Vexa Lite - One-Click Deployment
 
-Deploy Vexa Lite to your preferred platform in minutes. This repository contains deployment configurations for various cloud services.
+Deployment configurations for Vexa Lite - a lightweight API for real-time meeting transcription. See the [main Vexa repository](https://github.com/Vexa-ai/vexa) for project details and documentation.
+
+## What is Vexa?
+
+**Vexa** is an open-source, self-hostable API for real-time meeting transcription. This repository provides one-click deployment configurations to get Vexa Lite running on your preferred platform in minutes. No complex setup required - just configure your environment variables and deploy.
 
 ## 🚀 Quick Deploy - Fly.io
 
@@ -16,7 +20,7 @@ chmod +x deploy.sh
 - [Fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/) installed
 - Fly.io account (free tier available)
 - Database URL (Supabase, Neon, or any PostgreSQL)
-- Transcription API key
+- Transcription API key - get it from [https://staging.vexa.ai/dashboard/transcription](https://staging.vexa.ai/dashboard/transcription) or self-host your own Vexa transcription service 
 
 **Setup:**
 1. Install Fly CLI: `curl -L https://fly.io/install.sh | sh`
@@ -73,11 +77,17 @@ Many cloud providers offer managed PostgreSQL databases. Just ensure your connec
 
 ## 🔑 Getting a Transcription API Key
 
-1. Go to [vexa.ai/dashboard](https://vexa.ai/dashboard)
+**Option 1: Use Vexa Transcription Service**
+
+1. Go to [https://staging.vexa.ai/dashboard/transcription](https://staging.vexa.ai/dashboard/transcription)
 2. Sign up or log in
 3. Navigate to API Keys
 4. Create a new API key
 5. Copy and use in your deployment
+
+**Option 2: Self-Host Your Own Transcription Service**
+
+Deploy your own Vexa transcription service and use its API key. See the [Vexa documentation](https://github.com/Vexa-ai/vexa) for self-hosting instructions.
 
 ## 🧪 Verify Deployment
 
@@ -90,37 +100,6 @@ curl https://your-app-url/
 # API documentation
 open https://your-app-url/docs
 ```
-
-## 🔧 Troubleshooting
-
-### Database Connection Issues
-
-**Error: "Circuit breaker open"**
-- Wait 5-10 minutes for the circuit breaker to reset
-- Verify you're using the Session Pooler connection string (not Direct)
-- Check database credentials
-
-**Error: "Connection refused"**
-- Verify `DATABASE_URL` is correct
-- Check database firewall allows your deployment platform's IPs
-- Ensure `DB_SSL_MODE=require` for cloud databases
-
-### Application Not Starting
-
-1. Check logs:
-   ```bash
-   fly logs -a vexa-lite
-   ```
-
-2. Verify all environment variables are set:
-   ```bash
-   fly secrets list -a vexa-lite
-   ```
-
-3. Check health endpoint:
-   ```bash
-   curl https://your-app-url/
-   ```
 
 ## 🤝 Contributing
 
@@ -166,8 +145,7 @@ vexa-lite-deploy/
 - Vercel
 - Netlify
 - Azure Container Apps
-- Kubernetes (Helm charts)
-- Docker Compose (for local development)
+
 - And more!
 
 **Ready to contribute?** Open an issue or submit a PR! 🚀
