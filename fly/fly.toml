@@ -7,7 +7,7 @@ app = 'vexa-lite'
 primary_region = 'sjc'
 
 [build]
-  image = 'vexaai/vexa-lite:latest'
+  image = 'vexaai/vexa-lite:dev'
 
 [env]
   DB_SSL_MODE = 'require'
