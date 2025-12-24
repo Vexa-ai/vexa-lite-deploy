@@ -4,7 +4,21 @@
 
 # Vexa Lite - One-Click Deployment
 
-Deployment configurations for Vexa Lite - a lightweight API for real-time meeting transcription. See the [main Vexa repository](https://github.com/Vexa-ai/vexa) for project details and documentation.
+**For end users:** Quick deployment configurations for **Vexa Lite** on your platform of choice, with a variety of open-source user interfaces to choose from.
+
+> 📖 **Main Repository**: This repository provides deployment configurations. For core Vexa documentation, architecture details, and full feature set, see the [main Vexa repository](https://github.com/Vexa-ai/vexa).
+
+## What is Vexa Lite?
+
+**Vexa Lite** is a stateless, single-container version of Vexa designed for end users who want:
+- **Quick deployment** on any platform (Fly.io, Railway, Render, etc.)
+- **No GPU required** - transcription runs externally - though you can self host
+- **Choose your UI** - pick from open-source interfaces like [Vexa Dashboard](https://github.com/Vexa-ai/Vexa-Dashboard)
+- **Production-ready** - stateless, scalable, serverless-friendly
+
+**Vexa Lite** is built from the [main Vexa repository](https://github.com/Vexa-ai/vexa) and packaged as `vexaai/vexa-lite:latest`.
+
+> 💻 **For developers**: If you're developing Vexa or need the full stack with all services, see the [Docker Compose deployment guide](https://github.com/Vexa-ai/vexa/blob/main/docs/deployment.md).
 
 <p align="left">
   <strong>🚀 Fly.io</strong>
@@ -25,9 +39,22 @@ Deployment configurations for Vexa Lite - a lightweight API for real-time meetin
   <span style="color: #999;">Zoom (coming soon)</span>
 </p>
 
-## What is Vexa?
+## Quick Links
 
-**Vexa** is an open-source, self-hostable API for real-time meeting transcription. This repository provides one-click deployment configurations to get Vexa Lite running on your preferred platform in minutes. No complex setup required - just configure your environment variables and deploy.
+- **[Main Vexa Repository](https://github.com/Vexa-ai/vexa)** - Core API, services, and full documentation
+- **[Vexa Lite Deployment Guide](https://github.com/Vexa-ai/vexa/blob/main/docs/vexa-lite-deployment.md)** - Complete setup examples and configuration reference (all 4 deployment configurations)
+- **[Vexa Dashboard](https://github.com/Vexa-ai/Vexa-Dashboard)** - Open-source web UI for managing your Vexa instance
+
+> 📖 **This repository provides platform-specific deployment configs**. For complete deployment examples with all configuration options (local/remote database, local/remote transcription), see the [Vexa Lite Deployment Guide](https://github.com/Vexa-ai/vexa/blob/main/docs/vexa-lite-deployment.md).
+
+## User Interfaces
+
+After deploying Vexa Lite, you can choose from a variety of open-source user interfaces:
+
+- **[Vexa Dashboard](https://github.com/Vexa-ai/Vexa-Dashboard)** - Full-featured web UI with meeting management, real-time transcripts, AI assistant, and user management
+- More UIs coming soon...
+
+All UIs connect to your Vexa Lite API instance via REST and WebSocket.
 
 ## 🚀 Quick Deploy - Fly.io
 
@@ -83,7 +110,7 @@ Many cloud providers offer managed PostgreSQL databases. Just ensure your connec
 
 **Option 2: Self-Host Your Own Transcription Service**
 
-Deploy your own Vexa transcription service and use its API key. See the [Vexa documentation](https://github.com/Vexa-ai/vexa) for self-hosting instructions.
+Deploy your own Vexa transcription service and use its API key. See the [Vexa deployment documentation](https://github.com/Vexa-ai/vexa/blob/main/docs/deployment.md) for self-hosting instructions.
 
 ## 🧪 Verify Deployment
 
@@ -148,9 +175,15 @@ vexa-lite-deploy/
 
 ## 🆘 Need Help?
 
-- 📖 [Vexa Documentation](https://docs.vexa.ai)
-- 💬 [Discord Community](https://discord.gg/vexa)
+- 📖 [Main Vexa Documentation](https://github.com/Vexa-ai/vexa/tree/main/docs) - Complete guides and API reference
+- 📖 [Vexa Lite Deployment Guide](https://github.com/Vexa-ai/vexa/blob/main/docs/vexa-lite-deployment.md) - Detailed setup examples
+- 💬 [Discord Community](https://discord.gg/Ga9duGkVz9)
 - 🐛 [GitHub Issues](https://github.com/Vexa-ai/vexa/issues)
+
+## Related Projects
+
+- **[Vexa](https://github.com/Vexa-ai/vexa)** - Main repository with core API and services
+- **[Vexa Dashboard](https://github.com/Vexa-ai/Vexa-Dashboard)** - Web interface for managing Vexa instances
 
 ## 📄 License
 
