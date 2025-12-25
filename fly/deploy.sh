@@ -109,12 +109,76 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
 done
 
 echo ""
-echo "✅ Deployment complete!"
+echo "✅ Backend deployment complete!"
 echo ""
 echo "📋 Configuration:"
 echo "   App: $APP_NAME"
 echo "   URL: https://$APP_NAME.fly.dev"
 echo "   Admin API Token: $ADMIN_API_TOKEN"
 echo ""
+
+# Optional frontend deployment
+if [ "${DEPLOY_FRONTEND:-false}" = "true" ]; then
+  echo "🎨 Deploying frontend dashboard..."
+  echo ""
+  
+  DASHBOARD_APP_NAME="vexa-dashboard"
+  BACKEND_URL="https://$APP_NAME.fly.dev"
+  
+  # Check if dashboard app exists, create if it doesn't
+  echo "🔍 Checking if dashboard app exists..."
+  if fly status -a "$DASHBOARD_APP_NAME" &>/dev/null; then
+    echo "✅ Dashboard app already exists"
+  else
+    echo "📦 Dashboard app doesn't exist. Creating app..."
+    fly apps create "$DASHBOARD_APP_NAME" 2>/dev/null || {
+      echo "   App may already exist or creation failed. Continuing..."
+    }
+  fi
+  
+  # Set dashboard secrets
+  echo ""
+  echo "🔐 Setting dashboard secrets..."
+  fly secrets set \
+    "VEXA_API_URL=$BACKEND_URL" \
+    "VEXA_ADMIN_API_URL=$BACKEND_URL" \
+    "VEXA_ADMIN_API_KEY=$ADMIN_API_TOKEN" \
+    -a "$DASHBOARD_APP_NAME"
+  
+  # Deploy dashboard
+  echo ""
+  echo "📦 Deploying dashboard application..."
+  MAX_RETRIES=3
+  RETRY_COUNT=0
+  
+  while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+    if fly deploy -a "$DASHBOARD_APP_NAME" --config "$SCRIPT_DIR/fly-dashboard.toml" --ha=false; then
+      break
+    else
+      RETRY_COUNT=$((RETRY_COUNT + 1))
+      if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+        WAIT_TIME=$((RETRY_COUNT * 10))
+        echo "⚠️  Dashboard deployment failed. Waiting ${WAIT_TIME}s before retry ($RETRY_COUNT/$MAX_RETRIES)..."
+        sleep $WAIT_TIME
+      else
+        echo "❌ Dashboard deployment failed after $MAX_RETRIES attempts"
+        exit 1
+      fi
+    fi
+  done
+  
+  echo ""
+  echo "✅ Dashboard deployment complete!"
+  echo ""
+  echo "📋 Dashboard Configuration:"
+  echo "   App: $DASHBOARD_APP_NAME"
+  echo "   URL: https://$DASHBOARD_APP_NAME.fly.dev"
+  echo "   Backend: $BACKEND_URL"
+  echo ""
+else
+  echo "💡 To deploy the frontend dashboard, set DEPLOY_FRONTEND=true in your .env file"
+  echo ""
+fi
+
 echo "💡 Save your ADMIN_API_TOKEN securely - you'll need it for API access!"
 

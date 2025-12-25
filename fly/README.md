@@ -30,7 +30,7 @@ chmod +x deploy.sh
 ./deploy.sh
 ```
 
-The script will deploy the application
+The script will deploy the backend application. To also deploy the frontend dashboard, set `DEPLOY_FRONTEND=true` in your `.env` file.
 
 ### Option 2: Manual deployment
 
@@ -67,12 +67,23 @@ fly status -a vexa-lite
 
 ## Accessing the Application
 
-After deployment, your application will be available at the URL provided by Fly.io. You can find it by running:
+After deployment, your backend application will be available at the URL provided by Fly.io. You can find it by running:
 ```bash
 fly status -a vexa-lite
 ```
 
-The URL will typically be in the format: `https://your-app-name.fly.dev`
+The URL will typically be in the format: `https://vexa-lite.fly.dev`
+
+### Frontend Dashboard (Optional)
+
+If you deployed the frontend dashboard (by setting `DEPLOY_FRONTEND=true`), it will be available at:
+```bash
+fly status -a vexa-dashboard
+```
+
+The dashboard URL will typically be: `https://vexa-dashboard.fly.dev`
+
+The dashboard automatically connects to your backend API and uses the same `ADMIN_API_TOKEN` for authentication.
 
 
 ## Updating Secrets
@@ -100,4 +111,51 @@ fly secrets list -a vexa-lite
 ```bash
 fly apps restart -a vexa-lite
 ```
+
+## Frontend Dashboard Deployment
+
+The deployment script supports optionally deploying the Vexa Dashboard frontend alongside the backend.
+
+### Enable Frontend Deployment
+
+1. Add to your `.env` file:
+   ```bash
+   DEPLOY_FRONTEND=true
+   ```
+
+2. Run the deployment script:
+   ```bash
+   ./deploy.sh
+   ```
+
+The script will:
+- Deploy the backend to `vexa-lite` app
+- Deploy the frontend to `vexa-dashboard` app
+- Automatically configure the frontend to connect to your backend
+- Use the same `ADMIN_API_TOKEN` for authentication
+
+### Manual Frontend Deployment
+
+If you prefer to deploy the frontend manually:
+
+1. **Set secrets**:
+   ```bash
+   fly secrets set \
+     VEXA_API_URL="https://vexa-lite.fly.dev" \
+     VEXA_ADMIN_API_URL="https://vexa-lite.fly.dev" \
+     VEXA_ADMIN_API_KEY="your-admin-api-token" \
+     -a vexa-dashboard
+   ```
+
+2. **Deploy**:
+   ```bash
+   fly deploy -a vexa-dashboard --config fly-dashboard.toml
+   ```
+
+### Frontend Configuration
+
+The frontend uses the following environment variables (set via Fly secrets):
+- `VEXA_API_URL` - Backend API URL (defaults to `https://vexa-lite.fly.dev`)
+- `VEXA_ADMIN_API_URL` - Admin API URL (can be same as `VEXA_API_URL`)
+- `VEXA_ADMIN_API_KEY` - Admin API key (same as backend's `ADMIN_API_TOKEN`)
 

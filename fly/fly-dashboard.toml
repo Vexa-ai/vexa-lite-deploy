@@ -1,0 +1,36 @@
+# fly.toml app configuration file for vexa-dashboard frontend
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'vexa-dashboard'
+primary_region = 'sjc'
+
+[build]
+  image = 'vexaai/vexa-dashboard:latest'
+
+[env]
+  # VEXA_API_URL will be set via secrets to point to the backend
+  # VEXA_ADMIN_API_URL will be set via secrets (can be same as VEXA_API_URL)
+  # VEXA_ADMIN_API_KEY will be set via secrets
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+  [[http_service.checks]]
+    interval = '15s'
+    timeout = '5s'
+    grace_period = '30s'
+    method = 'GET'
+    path = '/api/health'
+
+[[vm]]
+  cpu_kind = 'shared'
+  cpus = 2
+  memory_mb = 2048
+
