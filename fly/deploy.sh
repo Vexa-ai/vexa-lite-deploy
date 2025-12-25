@@ -62,10 +62,51 @@ fly secrets set \
   "TRANSCRIBER_API_KEY=$TRANSCRIBER_API_KEY" \
   -a "$APP_NAME"
 
-# Deploy to fly.io
+# Check for stuck machines before deploying
+echo ""
+echo "🔍 Checking for stuck machines..."
+# Check machine status and look for stopped machines
+if fly machines list -a "$APP_NAME" 2>/dev/null | grep -q "stopped"; then
+  echo "⚠️  Found stopped machines. Attempting cleanup..."
+  # Get stopped machine IDs (second column in the table)
+  STOPPED_MACHINES=$(fly machines list -a "$APP_NAME" 2>/dev/null | grep "stopped" | awk '{print $1}' | head -5 || true)
+  
+  if [ -n "$STOPPED_MACHINES" ]; then
+    for MACHINE_ID in $STOPPED_MACHINES; do
+      # Skip header rows or invalid IDs
+      if [ -n "$MACHINE_ID" ] && [ "$MACHINE_ID" != "ID" ] && [ ${#MACHINE_ID} -gt 5 ]; then
+        echo "   Destroying machine: $MACHINE_ID"
+        fly machines destroy "$MACHINE_ID" -a "$APP_NAME" --force 2>/dev/null || true
+      fi
+    done
+    echo "⏳ Waiting 10 seconds for cleanup and rate limit cooldown..."
+    sleep 10
+  fi
+else
+  echo "✅ No stuck machines found"
+fi
+
+# Deploy to fly.io with retry logic
 echo ""
 echo "📦 Deploying application..."
-fly deploy -a "$APP_NAME"
+MAX_RETRIES=3
+RETRY_COUNT=0
+
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+  if fly deploy -a "$APP_NAME" --ha=false; then
+    break
+  else
+    RETRY_COUNT=$((RETRY_COUNT + 1))
+    if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+      WAIT_TIME=$((RETRY_COUNT * 10))
+      echo "⚠️  Deployment failed. Waiting ${WAIT_TIME}s before retry ($RETRY_COUNT/$MAX_RETRIES)..."
+      sleep $WAIT_TIME
+    else
+      echo "❌ Deployment failed after $MAX_RETRIES attempts"
+      exit 1
+    fi
+  fi
+done
 
 echo ""
 echo "✅ Deployment complete!"
