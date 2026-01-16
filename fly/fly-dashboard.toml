@@ -7,7 +7,7 @@ app = 'vexa-dashboard'
 primary_region = 'sjc'
 
 [build]
-  image = 'vexaai/vexa-dashboard:latest'
+  image = 'vexaai/vexa-dashboard:2601161222'
 
 [env]
   # VEXA_API_URL will be set via secrets to point to the backend
