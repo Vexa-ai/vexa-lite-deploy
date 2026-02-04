@@ -14,8 +14,77 @@ fi
 
 # Configuration
 APP_NAME="vexa-lite"
+DASHBOARD_APP_NAME="vexa-dashboard"
 
-# Use values from .env or fallback to defaults
+# Dashboard-only deployment: skip backend, deploy only dashboard (connects to external API)
+if [ "${DEPLOY_DASHBOARD_ONLY:-false}" = "true" ]; then
+  echo "🎨 Dashboard-only deployment mode"
+  echo "   Connecting to: ${VEXA_DASHBOARD_API_URL:-https://api.cloud.vexa.ai}"
+  echo ""
+  
+  if [ -z "$VEXA_DASHBOARD_ADMIN_API_KEY" ]; then
+    echo "❌ ERROR: VEXA_DASHBOARD_ADMIN_API_KEY not set for dashboard-only deploy. Set it in .env"
+    exit 1
+  fi
+  
+  VEXA_API_URL="${VEXA_DASHBOARD_API_URL:-https://api.cloud.vexa.ai}"
+  VEXA_ADMIN_API_URL="${VEXA_DASHBOARD_API_URL:-https://api.cloud.vexa.ai}"
+  VEXA_ADMIN_API_KEY="$VEXA_DASHBOARD_ADMIN_API_KEY"
+  
+  # Check if dashboard app exists, create if it doesn't
+  echo "🔍 Checking if dashboard app exists..."
+  if fly status -a "$DASHBOARD_APP_NAME" &>/dev/null; then
+    echo "✅ Dashboard app already exists"
+  else
+    echo "📦 Dashboard app doesn't exist. Creating app..."
+    fly apps create "$DASHBOARD_APP_NAME" 2>/dev/null || {
+      echo "   App may already exist or creation failed. Continuing..."
+    }
+  fi
+  
+  # Set dashboard secrets for external API connection
+  echo ""
+  echo "🔐 Setting dashboard secrets (api.cloud.vexa.ai)..."
+  fly secrets set \
+    "VEXA_API_URL=$VEXA_API_URL" \
+    "VEXA_ADMIN_API_URL=$VEXA_ADMIN_API_URL" \
+    "VEXA_ADMIN_API_KEY=$VEXA_ADMIN_API_KEY" \
+    -a "$DASHBOARD_APP_NAME"
+  
+  # Deploy dashboard
+  echo ""
+  echo "📦 Deploying dashboard application..."
+  MAX_RETRIES=3
+  RETRY_COUNT=0
+  
+  while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+    if fly deploy -a "$DASHBOARD_APP_NAME" --config "$SCRIPT_DIR/fly-dashboard.toml" --ha=false; then
+      break
+    else
+      RETRY_COUNT=$((RETRY_COUNT + 1))
+      if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+        WAIT_TIME=$((RETRY_COUNT * 10))
+        echo "⚠️  Dashboard deployment failed. Waiting ${WAIT_TIME}s before retry ($RETRY_COUNT/$MAX_RETRIES)..."
+        sleep $WAIT_TIME
+      else
+        echo "❌ Dashboard deployment failed after $MAX_RETRIES attempts"
+        exit 1
+      fi
+    fi
+  done
+  
+  echo ""
+  echo "✅ Dashboard deployment complete!"
+  echo ""
+  echo "📋 Dashboard Configuration:"
+  echo "   App: $DASHBOARD_APP_NAME"
+  echo "   URL: https://$DASHBOARD_APP_NAME.fly.dev"
+  echo "   Backend: $VEXA_API_URL"
+  echo ""
+  exit 0
+fi
+
+# Backend deployment (standard flow)
 if [ -z "$DATABASE_URL" ]; then
   echo "❌ ERROR: DATABASE_URL not set. Please set it in .env file or as environment variable."
   exit 1
@@ -122,7 +191,6 @@ if [ "${DEPLOY_FRONTEND:-false}" = "true" ]; then
   echo "🎨 Deploying frontend dashboard..."
   echo ""
   
-  DASHBOARD_APP_NAME="vexa-dashboard"
   BACKEND_URL="https://$APP_NAME.fly.dev"
   
   # Check if dashboard app exists, create if it doesn't
